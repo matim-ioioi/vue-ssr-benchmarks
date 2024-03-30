@@ -81,7 +81,7 @@ const benchmark = async (App) => {
     console.info("================ SUMMARY ================")
     console.info("Average is: ", average, "ms")
 
-    return JSON.stringify({ average })
+    return average
 }
 
 const startBenchmark = async () => {
@@ -91,13 +91,13 @@ const startBenchmark = async () => {
         const App = await import('./' + example.originalPath.replace(/\\/g, '/'))
 
         await warmUpV8(App.default)
-        const res = await benchmark(App.default)
+        const average = await benchmark(App.default)
 
         if (!fs.existsSync(path.resolve('./results', example.dir))) {
             fs.mkdirSync(path.resolve('./results', example.dir), { recursive: true })
         }
 
-        fs.writeFileSync(path.resolve('./results', example.dir, 'result.json'), res)
+        fs.writeFileSync(path.resolve('./results', example.dir, 'result.json'), JSON.stringify({ average }))
     }
 }
 
