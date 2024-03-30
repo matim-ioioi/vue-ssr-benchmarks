@@ -48,4 +48,3 @@ helm-*.yaml
 
 # build
 dist
-results
