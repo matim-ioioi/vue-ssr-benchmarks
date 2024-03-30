@@ -17,9 +17,7 @@ let examples =
                 name: examplePath.split('/')[1] ?? examplePath.split('\\')[1],
                 depth: +examplePath.replace(/.*depth-(\d+).*/g, '$1'),
                 breadth: +examplePath.replace(/.*breadth-(\d+).*/g, '$1'),
-                dir: path.dirname(examplePath),
                 originalPath: examplePath,
-                path: path.resolve(examplePath)
             }
         })
         .sort((a, b) => {
@@ -84,18 +82,12 @@ const startBenchmark = async () => {
     const md = {}
 
     for (let example of examples) {
-        console.info(`================ ${example.dir} START ================`)
+        console.info(`================ ${example.name} depth: ${example.depth} breadth: ${example.breadth} START ================`)
 
         const App = await import('./' + example.originalPath.replace(/\\/g, '/'))
 
         await warmUpV8(App.default)
         const average = await benchmark(App.default)
-
-        if (!fs.existsSync(path.resolve('./results', example.dir))) {
-            fs.mkdirSync(path.resolve('./results', example.dir), { recursive: true })
-        }
-
-        fs.writeFileSync(path.resolve('./results', example.dir, 'result.json'), JSON.stringify({ average }))
 
         let mdTableItem = md[`depth-${example.depth}-breadth-${example.breadth}`]
         if (!md[`depth-${example.depth}-breadth-${example.breadth}`]) {
@@ -106,6 +98,10 @@ const startBenchmark = async () => {
             mdTableItem = md[`depth-${example.depth}-breadth-${example.breadth}`]
         }
         mdTableItem.push([example.name, example.depth, example.breadth, average])
+    }
+
+    if (!fs.existsSync(path.resolve('./results'))) {
+        fs.mkdirSync(path.resolve('./results'))
     }
 
     Object.entries(md).forEach(([characteristics, mdTable]) => {
