@@ -8,7 +8,10 @@ const { markdownTable } = require('markdown-table')
 const args = process.argv.slice(2)
 const depthArg = args.find((arg) => /-d=\d+/.test(arg))?.replace(/.*-d=(\d+).*/g, '$1')
 const breadthArg = args.find((arg) => /-b=\d+/.test(arg))?.replace(/.*-b=(\d+).*/g, '$1')
+const nameArg = args.find((arg) => /-n=[\w-]+/.test(arg))?.replace(/.*-n=([\w-]+).*/g, '$1')
 const benchAll = args.find((arg) => /--all/.test(arg))
+const warpUpTimes = +args.find((arg) => /-warmup=\d+/.test(arg))?.replace(/.*-warmup=(\d+).*/g, '$1') || 20
+const benchmarkTimes = +args.find((arg) => /-bench=\d+/.test(arg))?.replace(/.*-bench=(\d+).*/g, '$1') || 10
 
 let examples =
     glob.sync('examples/**/App.{vue,jsx}', { cwd: path.resolve(process.cwd(), 'src/benchmark')})
@@ -39,23 +42,41 @@ let examples =
         })
 
 if (!benchAll) {
-    examples = examples.filter((example) => example.depth === (+depthArg || 5) && example.breadth === (+breadthArg || 15))
+    examples = examples.filter((example) => {
+        let bool = true
+
+        if (nameArg && !example.name.includes(nameArg)) {
+            bool = false
+        }
+
+        if (depthArg && +depthArg !== example.depth) {
+            bool = false
+        }
+
+        if (breadthArg && +breadthArg !== example.breadth) {
+            bool = false
+        }
+
+        return bool
+    })
 }
 
 const warmUpV8 = async (App) => {
-    console.info("Warming up...")
+    console.info(`Warming up ${warpUpTimes} times...`)
 
-    for (let i = 0; i < 20; i += 1) {
+    for (let i = 0; i < warpUpTimes; i += 1) {
         await renderToString(createApp(App))
     }
 
-    console.info("Warming up completed!")
+    console.info('Warming up completed!')
 }
 
 const benchmark = async (App) => {
     let time = []
 
-    for (let i = 0; i < 10; i++) {
+    console.info(`Benchmark ${benchmarkTimes} times...`)
+
+    for (let i = 0; i < benchmarkTimes; i++) {
         const start = process.hrtime()
 
         await renderToString(createApp(App))
@@ -63,6 +84,8 @@ const benchmark = async (App) => {
         const end = process.hrtime(start)
         time.push(end)
     }
+
+    console.info('Benchmark completed!')
 
     console.info("================ RESULT ================")
     const durations = time.map(t => (t[0] + t[1] / 1e9) * 1e3)
@@ -82,8 +105,6 @@ const startBenchmark = async () => {
     const md = {}
 
     for (let example of examples) {
-        console.info(`================ ${example.name} depth: ${example.depth} breadth: ${example.breadth} START ================`)
-
         const App = await import('./' + example.originalPath.replace(/\\/g, '/'))
 
         await warmUpV8(App.default)

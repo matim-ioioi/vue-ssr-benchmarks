@@ -6,7 +6,7 @@
     "clean:build": "rimraf ./dist",
     "clean:results": "rimraf ./results",
     "build:bench": "cross-env NODE_ENV=production webpack -c ./webpack.config.js",
-    "build": "npm run clean:build && npm run clean:results && npm run build:bench",
+    "build": "npm run clean:build && npm run build:bench",
     "bench": "npm run clean:results && cross-env NODE_ENV=production node ./dist/index.js"
   },
   "dependencies": {
