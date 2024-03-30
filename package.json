@@ -1,0 +1,24 @@
+{
+  "name": "vue-ssr-benchmarks",
+  "version": "1.0.0",
+  "description": "benchmarks for ssr of vue apps",
+  "scripts": {
+    "build:clean": "rimraf ./dist ./results",
+    "build:bench": "cross-env NODE_ENV=production webpack -c ./webpack.config.js",
+    "build": "npm run build:clean && npm run build:bench",
+    "bench": "cross-env NODE_ENV=production node ./dist/index.js"
+  },
+  "dependencies": {
+    "@vue/server-renderer": "^3.4.21",
+    "vue": "^3.4.21",
+    "vue-loader": "^17.4.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "glob": "^10.3.12",
+    "rimraf": "^5.0.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  }
+}
