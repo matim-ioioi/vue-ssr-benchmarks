@@ -7,7 +7,7 @@ module.exports = {
     mode: 'production',
     target: 'node',
     devtool: false,
-    entry: path.resolve(__dirname, './src/index.js'),
+    entry: path.resolve(__dirname, './src/benchmark/index.js'),
     output: {
         path: path.resolve(__dirname, './dist'),
         filename: 'index.js',
@@ -40,7 +40,7 @@ module.exports = {
             },
         ]
     },
-    externals: [NodeExternals({ allowlist: [/\.(eot|ttf|woff|woff2|otf|css)$/] })],
+    externals: [NodeExternals({ allowlist: [/\.(eot|ttf|woff|woff2|otf|css)$/, /markdown-table/] })],
     plugins: [
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production'),
@@ -50,4 +50,4 @@ module.exports = {
         }),
         new VueLoaderPlugin(),
     ]
-};
+}
