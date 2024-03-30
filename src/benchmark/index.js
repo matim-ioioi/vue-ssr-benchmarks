@@ -110,11 +110,11 @@ const startBenchmark = async () => {
 
     Object.entries(md).forEach(([characteristics, mdTable]) => {
         mdTable.sort((a, b) => {
-            if (typeof a[4] === 'string' || typeof b[4] === 'string') {
+            if (typeof a[3] === 'string' || typeof b[3] === 'string') {
                 return 0
             }
 
-            return a[4] === b[4] ? 0 : a[4] > b[4] ? 1 : -1
+            return a[3] === b[3] ? 0 : a[3] > b[3] ? 1 : -1
         })
 
         fs.writeFileSync(path.resolve('./results', `${characteristics}.md`), markdownTable(mdTable))
