@@ -4,7 +4,7 @@ const { glob } = require('glob')
 const path = require('path')
 const fs = require('fs')
 
-const sorted1 = glob.sync('examples/**/App.vue', { cwd: path.resolve(process.cwd(), 'src')}).sort((a, b) => {
+const sorted1 = glob.sync('examples/**/App.{vue,jsx}', { cwd: path.resolve(process.cwd(), 'src')}).sort((a, b) => {
     const depthA = +a.replace(/.*depth-(\d+).*/g, '$1')
     const depthB = +b.replace(/.*depth-(\d+).*/g, '$1')
 

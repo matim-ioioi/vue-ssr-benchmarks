@@ -16,7 +16,7 @@ export default defineComponent({
   setup(props) {
     const RecursiveDivs = (depth = 1, breadth = 1) => {
       if (depth <= 0) {
-        return `<div>1</div>`
+        return h('div', '1')
       }
 
       let children = []
@@ -25,7 +25,7 @@ export default defineComponent({
         children.push(RecursiveDivs(depth - 1, breadth))
       }
 
-      return `<div>${children.join('')}</div>`
+      return h('div', [...children])
     }
 
     return () => h(RecursiveDivs(props.depth, props.breadth))

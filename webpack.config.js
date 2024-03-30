@@ -13,8 +13,19 @@ module.exports = {
         filename: 'index.js',
         library: { type: 'commonjs-module' }
     },
+    resolve: {
+        extensions: ['.js', '.jsx', '.vue']
+    },
     module: {
         rules: [
+            {
+                test: /\.jsx?$/,
+                loader: 'babel-loader',
+                options: {
+                    plugins: ['@vue/babel-plugin-jsx']
+                },
+                exclude: /node_modules/,
+            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
