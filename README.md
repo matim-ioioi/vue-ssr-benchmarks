@@ -28,37 +28,43 @@ npm run build
 -n - an optional parameter for name of the example. Examples which includes specified name only will be run\
 -warmup - an optional parameter indicating the number of warm up runs before benchmarking begins\
 -bench - an optional parameter indicating the number of benchmark runs\
+-write - an optional parameter indicating the path to write the result, relative to "<rootDir>/results"\
 --all - an optional parameter indicating that all examples will be run
 
 All parameters except --all can be combined
 
 ```shell
-npm run build -- -d=[1,2,3,4,5]
+npm run bench -- -d=[1,2,3,4,5]
 
-npm run build -- -b=[1,5,10,15]
+npm run bench -- -b=[1,5,10,15]
 
-npm run build -- -n=<substr of name>
+npm run bench -- -n=<substr of name>
 
-npm run build -- -warmup=<number>
+npm run bench -- -warmup=<number>
 
-npm run build -- -bench=<number>
+npm run bench -- -bench=<number>
 
-npm run build -- --all
+npm run bench -- -write=<string>
+
+npm run bench -- --all
 ```
 
 Examples:
 
 ```shell
-npm run build -- -d=5
+npm run bench -- -d=5
 
-npm run build -- -b=15
+npm run bench -- -b=15
 
-npm run build -- -n=v-for
-npm run build -- -n=v-for-component
+npm run bench -- -n=v-for
+npm run bench -- -n=v-for-component
 
-npm run build -- -warmup=20
+npm run bench -- -warmup=20
 
-npm run build -- -bench=10
+npm run bench -- -bench=10
 
-npm run build -- -d=5 -b=15 -n=v-for-component
+npm run bench -- -d=5 -b=15 -n=v-for-component
+
+npm run bench -- -warmup=0 -write=without-warmup
+npm run bench -- -warmup=20 -write=warmup-20
 ```

@@ -10,8 +10,9 @@ const depthArg = args.find((arg) => /-d=\d+/.test(arg))?.replace(/.*-d=(\d+).*/g
 const breadthArg = args.find((arg) => /-b=\d+/.test(arg))?.replace(/.*-b=(\d+).*/g, '$1')
 const nameArg = args.find((arg) => /-n=[\w-]+/.test(arg))?.replace(/.*-n=([\w-]+).*/g, '$1')
 const benchAll = args.find((arg) => /--all/.test(arg))
-const warpUpTimes = +args.find((arg) => /-warmup=\d+/.test(arg))?.replace(/.*-warmup=(\d+).*/g, '$1') || 20
-const benchmarkTimes = +args.find((arg) => /-bench=\d+/.test(arg))?.replace(/.*-bench=(\d+).*/g, '$1') || 10
+const warpUpTimes = args.find((arg) => /-warmup=\d+/.test(arg))?.replace(/.*-warmup=(\d+).*/g, '$1') ?? 20
+const benchmarkTimes = args.find((arg) => /-bench=\d+/.test(arg))?.replace(/.*-bench=(\d+).*/g, '$1') ?? 10
+const writeResultsAdditionalPath = args.find((arg) => /-write=[\w-]+/.test(arg))?.replace(/.*-write=([\w-]+).*/g, '$1') || ''
 
 let examples =
     glob.sync('examples/**/App.{vue,jsx}', { cwd: path.resolve(process.cwd(), 'src/benchmark')})
@@ -64,7 +65,7 @@ if (!benchAll) {
 const warmUpV8 = async (App) => {
     console.info(`Warming up ${warpUpTimes} times...`)
 
-    for (let i = 0; i < warpUpTimes; i += 1) {
+    for (let i = 0; i < +warpUpTimes; i += 1) {
         await renderToString(createApp(App))
     }
 
@@ -76,7 +77,7 @@ const benchmark = async (App) => {
 
     console.info(`Benchmark ${benchmarkTimes} times...`)
 
-    for (let i = 0; i < benchmarkTimes; i++) {
+    for (let i = 0; i < +benchmarkTimes; i++) {
         const start = process.hrtime()
 
         await renderToString(createApp(App))
@@ -105,6 +106,8 @@ const startBenchmark = async () => {
     const md = {}
 
     for (let example of examples) {
+        console.info(`Run ${example.name} with depth is ${example.depth} and breadth is ${example.breadth}...`)
+
         const App = await import('./' + example.originalPath.replace(/\\/g, '/'))
 
         await warmUpV8(App.default)
@@ -121,8 +124,8 @@ const startBenchmark = async () => {
         mdTableItem.push([example.name, example.depth, example.breadth, average])
     }
 
-    if (!fs.existsSync(path.resolve('./results'))) {
-        fs.mkdirSync(path.resolve('./results'))
+    if (!fs.existsSync(path.resolve('./results', writeResultsAdditionalPath))) {
+        fs.mkdirSync(path.resolve('./results', writeResultsAdditionalPath), { recursive: true })
     }
 
     Object.entries(md).forEach(([characteristics, mdTable]) => {
@@ -134,7 +137,7 @@ const startBenchmark = async () => {
             return a[3] === b[3] ? 0 : a[3] > b[3] ? 1 : -1
         })
 
-        fs.writeFileSync(path.resolve('./results', `${characteristics}.md`), markdownTable(mdTable))
+        fs.writeFileSync(path.resolve('./results', writeResultsAdditionalPath, `${characteristics}.md`), markdownTable(mdTable))
     })
 }
 
