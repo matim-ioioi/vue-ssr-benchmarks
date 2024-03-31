@@ -5,12 +5,13 @@
   "scripts": {
     "clean:build": "rimraf ./dist",
     "clean:results": "rimraf ./results",
-    "build:bench": "cross-env NODE_ENV=production webpack -c ./webpack.config.js",
-    "build": "npm run clean:build && npm run build:bench",
-    "bench": "npm run clean:results && cross-env NODE_ENV=production node ./dist/index.js"
+    "build": "npm run clean:build && cross-env NODE_ENV=production webpack -c ./webpack.config.js",
+    "bench": "npm run clean:results && cross-env NODE_ENV=production node ./dist/index.js",
+    "server": "cross-env NODE_ENV=production node ./dist/server.js"
   },
   "dependencies": {
     "@vue/server-renderer": "^3.4.21",
+    "fastify": "^4.26.2",
     "vue": "^3.4.21",
     "vue-loader": "^17.4.2"
   },

@@ -7,10 +7,12 @@ module.exports = {
     mode: 'production',
     target: 'node',
     devtool: false,
-    entry: path.resolve(__dirname, './src/benchmark/index.js'),
+    entry: {
+        bench: path.resolve(__dirname, './src/benchmark/index.js'),
+        server: path.resolve(__dirname, './src/server/index.js'),
+    },
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: 'index.js',
         library: { type: 'commonjs-module' }
     },
     resolve: {
